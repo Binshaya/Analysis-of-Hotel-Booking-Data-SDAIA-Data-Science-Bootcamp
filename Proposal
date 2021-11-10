@@ -1,42 +1,14 @@
-RESEARCH PROPOSAL TEMPLATE
+Analysis of hotel books
 
-When preparing a research proposal, it is essential that the proposed area of research is clearly articulated.  Consulting with a faculty member in the research area of interest is recommended, but not necessarily required.  Liaising with an academic who specializes in your proposal topic will help to strengthen the overall direction of the research.
+The objective of this project is to understand the main factors affecting hotel reservations, the reasons for cancellation and the increased hotel outcomes,
+This analysis will help hotel management to understand the reasons for canceling client reservations,
+and help to increase productivity and build a model to predict if someone will cancel his hotel reservation.
 
-•	Length of Proposal:  This is a “brief” research proposal and should be between 2 and 3 pages long.  For contextual purposes, in grad school, the length can range from 10 to 25 pages in length! 😊
-•	The following outline may be used as a guide. You should consider each of the areas that will be relevant to your research.
-•	Format: 12 point, Times New Roman, Single Space.
+♪ Models ♪
+To start the project, I chose the classification Mode.
 
-Working Research Title
-An initial working title should be provided and should describe the content and direction of your project.
-For example: Jovian Robotics, Titan Rover: Enhancing Telepresence and Tactile Feedback Mechanisms
+## Data
+The dataset contains 119,390 waterpoints with 22 features for each
 
-Abstract
-Short 150 word description that describes the research proposal; a quick statement on goal, method and expected outcomes.
-
-Introduction
-Give us a summary of the research, high level overview and purpose of research.
-
-Research Goal
-What do you want to know, prove, demonstrate, analyze, test, investigate or examine? List your project goals…for example…
-•	The goal of this research is to:
-o	Illustrate a new methodology/architecture/product/invention that has never been built before
-o	Determine the efficacy of your new method/architecture/product/invention
-o	Creation of a research roadmap as it pertains to my new method/architecture/product/invention
-
-Background and/or Theories
-What is already known or unknown? What past research are you building upon?
-
-Hypotheses (optional)
-Depending on the nature of you research, hypothesis might not be stated up front.  For example, if you choose a qualitative research method that leverages grounded theory, then a the “theory” is an emergent property at the END of your research (i.e., a theory is developed inductively not deductively when using grounded theory).  However, if your method is Quantitative or Design Science oriented, then you should include verbiage upfront in your proposal that discusses what your hypothesis (or hypotheses will be).
-
-Methodology
-What method will you use? What do you need? (specify any special equipment, software or material) Can you access necessary data or expertise? Do you require particular resources? Are there barriers or pitfalls? Does the project involve humans, animals or safety implications? Is travel or fieldwork required? If so, where to, how long and at what intervals?
-
-Timetable
-Indicate the estimated timeframe for each stage considering literature surveys, data collection, production, modelling, review, analysis, testing, reporting milestones, and research submission date.
-
-Expected conclusions, implications or justifications
-Why is it important? What do you expect it will deliver? What are the expected outcomes? Establish the importance of your project by highlighting its uniqueness/inventiveness and why it is worth pursuing. Highlight the benefits, positive expected outcomes or innovative applications of knowledge.
-
-References
-A references section is required.  References must be cited in APA format.
+## Tools
+- Numpy and Pandas for data manipultaion
