@@ -8,7 +8,12 @@ and help to increase productivity and build a model to predict if someone will c
 To start the project, I chose the classification Mode.
 
 ## Data
-The dataset contains 119,390 waterpoints with 22 features for each
+ I used the dataset from kaggle contains 119,390 waterpoints with 22 features for each
+"Hotel booking demand
+From the paper: hotel booking demand datasets"
+ https://www.kaggle.com/jessemostipak/hotel-booking-demand
 
 ## Tools
 - Numpy and Pandas for data manipultaion
+- matplotlib & seaborn 
+- sklearn & xgboost
