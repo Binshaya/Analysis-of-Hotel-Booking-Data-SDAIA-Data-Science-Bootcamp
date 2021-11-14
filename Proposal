@@ -17,3 +17,9 @@ From the paper: hotel booking demand datasets"
 - Numpy and Pandas for data manipultaion
 - matplotlib & seaborn 
 - sklearn & xgboost
+
+#Questions
+
+Which are the most busy booked month ?
+
+What pepoles prefer to book resort hotel or city hotel ( give me a precentage ) ?
