@@ -3,10 +3,820 @@ Analysis of the Hotel Booking
 The goal of this project is to predict if a guest will actually come or he will cancel the resrvation,
 it will be usefull for hotels if they have model like this to offer more rooms or take a retainer from the client before the resrvation.
 
-https://github.com/Binshaya/Project-proposal/blob/main/image.png?raw=true
 https://github.com/Binshaya/Project-proposal/blob/ddeb097c81007c02d8e4b7893c2d4654cd611cd9/image.png
+
 To start exploring this goal, I used a linear regression model with one feature to describe Box Office Total Domestic Gross as a function of the Budget of a Movie.
 
 The figure depicts the model (red) plotted against the actual data points. The prediction interval is plotted in green.
 
 This result suggests that budget may have a significant positive impact on a film's revenue. However, the magnitude of the model's residuals makes it clear that budget is not the only important factor in determining the success of a film.
+
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "id": "61972720",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import matplotlib.pyplot as plt\n",
+    "import seaborn as sns\n",
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "9ef34af5",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>hotel</th>\n",
+       "      <th>is_canceled</th>\n",
+       "      <th>lead_time</th>\n",
+       "      <th>arrival_date_year</th>\n",
+       "      <th>arrival_date_month</th>\n",
+       "      <th>arrival_date_week_number</th>\n",
+       "      <th>arrival_date_day_of_month</th>\n",
+       "      <th>stays_in_weekend_nights</th>\n",
+       "      <th>stays_in_week_nights</th>\n",
+       "      <th>adults</th>\n",
+       "      <th>...</th>\n",
+       "      <th>deposit_type</th>\n",
+       "      <th>agent</th>\n",
+       "      <th>company</th>\n",
+       "      <th>days_in_waiting_list</th>\n",
+       "      <th>customer_type</th>\n",
+       "      <th>adr</th>\n",
+       "      <th>required_car_parking_spaces</th>\n",
+       "      <th>total_of_special_requests</th>\n",
+       "      <th>reservation_status</th>\n",
+       "      <th>reservation_status_date</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Resort Hotel</td>\n",
+       "      <td>0</td>\n",
+       "      <td>342</td>\n",
+       "      <td>2015</td>\n",
+       "      <td>July</td>\n",
+       "      <td>27</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>...</td>\n",
+       "      <td>No Deposit</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Transient</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Check-Out</td>\n",
+       "      <td>2015-07-01</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Resort Hotel</td>\n",
+       "      <td>0</td>\n",
+       "      <td>737</td>\n",
+       "      <td>2015</td>\n",
+       "      <td>July</td>\n",
+       "      <td>27</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>...</td>\n",
+       "      <td>No Deposit</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Transient</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Check-Out</td>\n",
+       "      <td>2015-07-01</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Resort Hotel</td>\n",
+       "      <td>0</td>\n",
+       "      <td>7</td>\n",
+       "      <td>2015</td>\n",
+       "      <td>July</td>\n",
+       "      <td>27</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>...</td>\n",
+       "      <td>No Deposit</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Transient</td>\n",
+       "      <td>75.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Check-Out</td>\n",
+       "      <td>2015-07-02</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Resort Hotel</td>\n",
+       "      <td>0</td>\n",
+       "      <td>13</td>\n",
+       "      <td>2015</td>\n",
+       "      <td>July</td>\n",
+       "      <td>27</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>...</td>\n",
+       "      <td>No Deposit</td>\n",
+       "      <td>304.0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Transient</td>\n",
+       "      <td>75.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Check-Out</td>\n",
+       "      <td>2015-07-02</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Resort Hotel</td>\n",
+       "      <td>0</td>\n",
+       "      <td>14</td>\n",
+       "      <td>2015</td>\n",
+       "      <td>July</td>\n",
+       "      <td>27</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>...</td>\n",
+       "      <td>No Deposit</td>\n",
+       "      <td>240.0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Transient</td>\n",
+       "      <td>98.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Check-Out</td>\n",
+       "      <td>2015-07-03</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>5 rows × 32 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          hotel  is_canceled  lead_time  arrival_date_year arrival_date_month  \\\n",
+       "0  Resort Hotel            0        342               2015               July   \n",
+       "1  Resort Hotel            0        737               2015               July   \n",
+       "2  Resort Hotel            0          7               2015               July   \n",
+       "3  Resort Hotel            0         13               2015               July   \n",
+       "4  Resort Hotel            0         14               2015               July   \n",
+       "\n",
+       "   arrival_date_week_number  arrival_date_day_of_month  \\\n",
+       "0                        27                          1   \n",
+       "1                        27                          1   \n",
+       "2                        27                          1   \n",
+       "3                        27                          1   \n",
+       "4                        27                          1   \n",
+       "\n",
+       "   stays_in_weekend_nights  stays_in_week_nights  adults  ...  deposit_type  \\\n",
+       "0                        0                     0       2  ...    No Deposit   \n",
+       "1                        0                     0       2  ...    No Deposit   \n",
+       "2                        0                     1       1  ...    No Deposit   \n",
+       "3                        0                     1       1  ...    No Deposit   \n",
+       "4                        0                     2       2  ...    No Deposit   \n",
+       "\n",
+       "   agent company days_in_waiting_list customer_type   adr  \\\n",
+       "0    NaN     NaN                    0     Transient   0.0   \n",
+       "1    NaN     NaN                    0     Transient   0.0   \n",
+       "2    NaN     NaN                    0     Transient  75.0   \n",
+       "3  304.0     NaN                    0     Transient  75.0   \n",
+       "4  240.0     NaN                    0     Transient  98.0   \n",
+       "\n",
+       "   required_car_parking_spaces  total_of_special_requests  reservation_status  \\\n",
+       "0                            0                          0           Check-Out   \n",
+       "1                            0                          0           Check-Out   \n",
+       "2                            0                          0           Check-Out   \n",
+       "3                            0                          0           Check-Out   \n",
+       "4                            0                          1           Check-Out   \n",
+       "\n",
+       "  reservation_status_date  \n",
+       "0              2015-07-01  \n",
+       "1              2015-07-01  \n",
+       "2              2015-07-02  \n",
+       "3              2015-07-02  \n",
+       "4              2015-07-03  \n",
+       "\n",
+       "[5 rows x 32 columns]"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Data = pd.read_csv(r'C:\\Users\\mmm--\\Desktop\\T5\\hotel_bookings.csv')\n",
+    "Data.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "c3272745",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(119390, 32)"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Data.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "0ce18f8e",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 119390 entries, 0 to 119389\n",
+      "Data columns (total 32 columns):\n",
+      " #   Column                          Non-Null Count   Dtype  \n",
+      "---  ------                          --------------   -----  \n",
+      " 0   hotel                           119390 non-null  object \n",
+      " 1   is_canceled                     119390 non-null  int64  \n",
+      " 2   lead_time                       119390 non-null  int64  \n",
+      " 3   arrival_date_year               119390 non-null  int64  \n",
+      " 4   arrival_date_month              119390 non-null  object \n",
+      " 5   arrival_date_week_number        119390 non-null  int64  \n",
+      " 6   arrival_date_day_of_month       119390 non-null  int64  \n",
+      " 7   stays_in_weekend_nights         119390 non-null  int64  \n",
+      " 8   stays_in_week_nights            119390 non-null  int64  \n",
+      " 9   adults                          119390 non-null  int64  \n",
+      " 10  children                        119386 non-null  float64\n",
+      " 11  babies                          119390 non-null  int64  \n",
+      " 12  meal                            119390 non-null  object \n",
+      " 13  country                         118902 non-null  object \n",
+      " 14  market_segment                  119390 non-null  object \n",
+      " 15  distribution_channel            119390 non-null  object \n",
+      " 16  is_repeated_guest               119390 non-null  int64  \n",
+      " 17  previous_cancellations          119390 non-null  int64  \n",
+      " 18  previous_bookings_not_canceled  119390 non-null  int64  \n",
+      " 19  reserved_room_type              119390 non-null  object \n",
+      " 20  assigned_room_type              119390 non-null  object \n",
+      " 21  booking_changes                 119390 non-null  int64  \n",
+      " 22  deposit_type                    119390 non-null  object \n",
+      " 23  agent                           103050 non-null  float64\n",
+      " 24  company                         6797 non-null    float64\n",
+      " 25  days_in_waiting_list            119390 non-null  int64  \n",
+      " 26  customer_type                   119390 non-null  object \n",
+      " 27  adr                             119390 non-null  float64\n",
+      " 28  required_car_parking_spaces     119390 non-null  int64  \n",
+      " 29  total_of_special_requests       119390 non-null  int64  \n",
+      " 30  reservation_status              119390 non-null  object \n",
+      " 31  reservation_status_date         119390 non-null  object \n",
+      "dtypes: float64(4), int64(16), object(12)\n",
+      "memory usage: 29.1+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "Data.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "ce4a2472",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "RangeIndex(start=0, stop=119390, step=1)"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Data.index"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "08156f99",
+   "metadata": {},
+   "source": [
+    "#### making sure all columns are unique"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "2d71ce76",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "32"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(Data.columns.unique())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "0d950088",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Resort Hotel', 'City Hotel'], dtype=object)"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Data['hotel'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "19acf1c8",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Index(['hotel', 'is_canceled', 'lead_time', 'arrival_date_year',\n",
+       "       'arrival_date_month', 'arrival_date_week_number',\n",
+       "       'arrival_date_day_of_month', 'stays_in_weekend_nights',\n",
+       "       'stays_in_week_nights', 'adults', 'children', 'babies', 'meal',\n",
+       "       'country', 'market_segment', 'distribution_channel',\n",
+       "       'is_repeated_guest', 'previous_cancellations',\n",
+       "       'previous_bookings_not_canceled', 'reserved_room_type',\n",
+       "       'assigned_room_type', 'booking_changes', 'deposit_type', 'agent',\n",
+       "       'company', 'days_in_waiting_list', 'customer_type', 'adr',\n",
+       "       'required_car_parking_spaces', 'total_of_special_requests',\n",
+       "       'reservation_status', 'reservation_status_date'],\n",
+       "      dtype='object')"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Data.columns"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a32fec08",
+   "metadata": {},
+   "source": [
+    "#### There are 4 columns have empty values"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "1ca0d54a",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Index(['children', 'country', 'agent', 'company'], dtype='object')"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Data.columns[Data.isna().any()].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "67901101",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Number of columns have empty values :\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "4"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "print (\"Number of columns have empty values :\")\n",
+    "len(Data.columns[Data.isna().any()].unique())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2359bb4a",
+   "metadata": {},
+   "source": [
+    "#### i'm gonna look more deeper into these four columns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "570f7479",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Number of empty values in children column:  4\n",
+      "Percentage：  0.003350364352123293\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"Number of empty values in children column: \", Data['children'].isnull().sum())\n",
+    "print(\"Percentage： \", Data['children'].isnull().sum() / Data.shape[0] * 100)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "ef519351",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Number of empty values in country column:  488\n",
+      "Percentage：  0.40874445095904177\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"Number of empty values in country column: \", Data['country'].isnull().sum())\n",
+    "print(\"Percentage： \", Data['country'].isnull().sum() / Data.shape[0] * 100)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "df0ad024",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Number of empty values in agent column:  16340\n",
+      "Percentage：  13.686238378423655\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"Number of empty values in agent column: \", Data['agent'].isnull().sum())\n",
+    "print(\"Percentage： \", Data['agent'].isnull().sum() / Data.shape[0] * 100)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "20c37638",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Number of empty values in company column:  112593\n",
+      "Percentage：  94.30689337465449\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"Number of empty values in company column: \", Data['company'].isnull().sum())\n",
+    "print(\"Percentage： \", Data['company'].isnull().sum() / Data.shape[0] * 100)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e6583507",
+   "metadata": {},
+   "source": [
+    "#### company column show that is 94% of columns are missing so i can't use it any more i'll drop it"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "277ec51a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Data = Data.drop(['company'], axis =1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "eeb05fbb",
+   "metadata": {},
+   "source": [
+    "#### Making sure the company column was deleted"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "id": "fbae428a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(119390, 31)"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Data.shape"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0be43def",
+   "metadata": {},
+   "source": [
+    "### What pepoles prefer to book resort hotel or city hotel ( give me a precentage ) ?\n",
+    "#### as we see most of the pepole (%66) prefer to book a city hotel bcause the resort usually more expensive "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "id": "89d57f7b",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "City Hotel      66.446101\n",
+       "Resort Hotel    33.553899\n",
+       "Name: hotel, dtype: float64"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "plt.title(\"Hotel Column\")\n",
+    "sns.countplot(x=Data['hotel'])\n",
+    "plt.show()\n",
+    "Data['hotel'].value_counts() / Data.shape[0] * 100"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5157c835",
+   "metadata": {},
+   "source": [
+    "### What is the perecntage of pepole who's cancel there reservation ?\n",
+    "#### as we see here (0) means not canceled in %62 which means most of the pepole not canceled"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "id": "3df7f94e",
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "0    62.958372\n",
+       "1    37.041628\n",
+       "Name: is_canceled, dtype: float64"
+      ]
+     },
+     "execution_count": 26,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "plt.title(\"is_canceled column\")\n",
+    "sns.countplot(x=Data['is_canceled'])\n",
+    "plt.show()\n",
+    "Data['is_canceled'].value_counts() / Data.shape[0] * 100"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7b732f56",
+   "metadata": {},
+   "source": [
+    "### which are the most busy month ?\n",
+    "#### it shows the must pepoles booked in August"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "id": "ff52ea28",
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 864x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "August       13877\n",
+       "July         12661\n",
+       "May          11791\n",
+       "October      11160\n",
+       "April        11089\n",
+       "June         10939\n",
+       "September    10508\n",
+       "March         9794\n",
+       "February      8068\n",
+       "November      6794\n",
+       "December      6780\n",
+       "January       5929\n",
+       "Name: arrival_date_month, dtype: int64"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "plt.figure(figsize=(12, 4))\n",
+    "plt.title(\"Arrival Months\")\n",
+    "sns.countplot(x=Data['arrival_date_month'])\n",
+    "plt.show()\n",
+    "Data['arrival_date_month'].value_counts()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
